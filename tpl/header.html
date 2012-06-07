@@ -1,0 +1,18 @@
+{{define "header"}}
+<!DOCTYPE html>
+<html>
+  <head lang="pl">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title dir="ltr">{{.Header}} - shop</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" media="screen" href="/static/style.css" >
+  </head>
+  <body>
+    <a href="/">home</a> |
+    <a href="/products">products</a> |
+    <a href="/users">users</a>
+    <div>
+      <h1>{{.Header}}</h1>
+    </div>
+{{end}}
