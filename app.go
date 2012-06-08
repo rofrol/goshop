@@ -16,18 +16,13 @@ import (
 //	"reflect"
 )
 
-var store = sessions.NewCookieStore([]byte("something-very-secret"))
+// If content-type not set manually, it will be guessed by http://golang.org/src/pkg/net/http/sniff.go
+// w.Header().Set("Content-Type", "text/html; charset=utf-8")
+// io.WriteString(w, v)
+// io.WriteString(w, `<br><form method="POST" action="/post"><input name="s"></form>`)
+// io.WriteString(w, `<div>hello</div>`)
 
-func MyHandler(w http.ResponseWriter, r *http.Request) {
-	// Get a session. We're ignoring the error resulted from decoding an
-	// existing session: Get() always returns a session, even if empty.
-	session, _ := store.Get(r, "session-name")
-	// Set some session values.
-	session.Values["foo"] = "bar"
-	session.Values[42] = 43
-	// Save it.
-	session.Save(r, w)
-}
+var store = sessions.NewCookieStore([]byte("something-very-secret"))
 
 func products(w http.ResponseWriter, r *http.Request) {
 	db, err := sql.Open("sqlite3", "./db/app.db")
@@ -178,6 +173,12 @@ func productsAdd(w http.ResponseWriter, r *http.Request) {
 	// http://en.wikipedia.org/wiki/Post/Redirect/Get
 	// http://en.wikipedia.org/wiki/HTTP_303
 	// http://stackoverflow.com/questions/46582/response-redirect-with-post-instead-of-get
+	// 303 for HTTP 1.1, maybe problem with old corporate proxies, so 302 could be better
+	//
+	// https://groups.google.com/forum/?fromgroups#!msg/golang-nuts/HeAoybScSTU/qxp1H7mWZVYJ
+	// The common practice is to redirect only after successful forms.
+	// So forms with errors are treated by the same POST request, and so have
+	//access to the data.
 	http.Redirect(w, r, "/products", http.StatusSeeOther)
 }
 
@@ -205,20 +206,6 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func hi(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "hi")
-}
-func post(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Method)
-	r.ParseForm()
-	v := r.Form.Get("s")
-	// If content-type not set manually, it will be guessed by http://golang.org/src/pkg/net/http/sniff.go
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	io.WriteString(w, v)
-	io.WriteString(w, `<br><form method="POST" action="/post"><input name="s"></form>`)
-	io.WriteString(w, `<div>hello</div>`)
-}
-
 func serve404(w http.ResponseWriter) {
 	// https://gist.github.com/1075842
 	w.WriteHeader(http.StatusNotFound)
@@ -237,6 +224,7 @@ func redirectHandler(path string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, path, http.StatusMovedPermanently)
 	}
+	// usage: http.HandleFunc("/1", redirectHandler("/one"))
 }
 
 func parseForm(r *http.Request) error {
@@ -265,21 +253,50 @@ func parseForm(r *http.Request) error {
 	return nil
 }
 
+func notlsHandler(w http.ResponseWriter, r *http.Request) {
+	fullUrl := "https://localhost:9999" + r.RequestURI
+	http.Redirect(w, r, fullUrl, http.StatusMovedPermanently)
+}
+
 var addr = flag.String("addr", ":9999", "http service address") // Q=17, R=18
 
 func main() {
+	store.Options.Secure = true
 	flag.Parse()
-	r := mux.NewRouter()
+	// If only one version can be returned (i.e., the other redirects to it), that’s great!
+	// http://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
+	r := mux.NewRouter().StrictSlash(true)
+	// If a site is accessed over HTTPS and loads some parts of a page over insecure HTTP, the user might still be vulnerable to some attacks or some kinds of surveillance. For instance, the New York Times makes many HTML pages available in HTTPS, but other resources such as images, CSS, JavaScript, or third party ads and tracking beacons, are only loadable over HTTP. That means that these resources are sent unencrypted, and someone spying on you could probably infer the article you were reading.
+	// There are also potential vulnerabilities when parts of a page are loaded over HTTP because an attacker might replace them with versions containing false information, or Javascript code that helps the attacker spy on the user or take over an account.
+	//
+	// In order to [enable HTTPS by default for Gmail] we had to deploy
+	// no additional machines and no special hardware. On our production
+	// frontend machines, SSL/TLS accounts for less than 1% of the CPU load, less
+	// than 10KB of memory per connection and less than 2% of network overhead.
+	// www.eff.org/https-everywhere/faq
+
+	//Not needed, because there is redirecting
+	//s := r.Schemes("https").Subrouter()
 	r.HandleFunc("/", http.HandlerFunc(index))
-	r.HandleFunc("/hi", http.HandlerFunc(hi))
+	// trailing slash denotes a directory, while the lack of it denotes a file/resource
+	// http://techblog.bozho.net/?p=401
 	r.HandleFunc("/products", http.HandlerFunc(products))
 	r.HandleFunc("/products/add", http.HandlerFunc(productsAdd))
 	r.HandleFunc("/users", http.HandlerFunc(users))
-	r.HandleFunc("/post", http.HandlerFunc(post))
 	http.Handle("/", r)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
-	err := http.ListenAndServe(*addr, nil)
-	if err != nil {
-		log.Fatal("ListenAndServe:", err)
-	}
+
+	// starting in goroutines with error reporting, thanks to davecheney from #go-nuts
+	go func() {
+		log.Fatalf("ListenAndServe: %v", http.ListenAndServe(":8080", http.HandlerFunc(notlsHandler)))
+	}()
+	go func() {
+		log.Fatalf("ListenAndServeTLS: %v", http.ListenAndServeTLS(*addr, "tls/cert.pem", "tls/key.pem", nil))
+	}()
+	select {}
+
+	// Testing redirecting
+	// curl -v http://localhost:8080/products
+	// Or if you made forwarding or run as superuser so you have access to ports below 1024
+	// curl -v http://localhost/products
 }

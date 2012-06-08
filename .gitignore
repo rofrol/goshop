@@ -1,2 +1,4 @@
 db/app.db
 db/populate.sql
+tls/cert.pem
+tls/key.pem
