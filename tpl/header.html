@@ -11,8 +11,12 @@
   <body>
     <a href="/">home</a> |
     <a href="/products">products</a> |
-    <a href="/users">users</a>
-    <div>
-      <h1>{{.Header}}</h1>
-    </div>
+    <a href="/users">users</a> |
+    {{if .login}}
+      {{.login}}
+      <a href="/logout">logout</a><br>
+    {{else}}
+      <a href="/login">login</a>
+    {{end}}
+    <h1>{{.Header}}</h1>
 {{end}}

@@ -9,7 +9,7 @@ CREATE TABLE users (
   id integer primary key autoincrement,
   name1 string not null,
   name2 string,
-  surname string not null
+  surname string not null,
 );
 CREATE TABLE orders (
   id integer primary key autoincrement,

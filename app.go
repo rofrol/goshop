@@ -1,3 +1,15 @@
+//TODO:
+// 1. Also for HTTP?: Zero Downtime upgrades of TCP servers in Go http://blog.nella.org/?p=879
+// 2. Nicer errror handling, maybe panic?
+// 3. Storing pictures of products, resizing
+// 4. header function, so I don't have to get login from session every time template is executed. Also different meta keywords, titles.
+// 5. template caching
+// 6. reCaptcha
+// 7. account activation via email
+// 8. password and login recover
+// 9. oauth for registration
+// 10. pretty urls for products
+// 11. Test Riak for perfomrance http://blog.airbrake.io/status/planned-airbrake-migration-love-go-love-riak/
 package main
 
 import (
@@ -8,6 +20,7 @@ import (
 	"flag"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
+	"html"
 	"html/template"
 	"io"
 	"log"
@@ -22,9 +35,59 @@ import (
 // io.WriteString(w, `<br><form method="POST" action="/post"><input name="s"></form>`)
 // io.WriteString(w, `<div>hello</div>`)
 
+// HTTP is stateless: a client computer running a web browser must establish a new TCP network connection to the web server with each new HTTP GET or POST request. The web server, therefore, cannot rely on an established TCP network connection for longer than a single HTTP GET or POST operation.
+// Session management is the technique used by the web developer to make the stateless HTTP protocol support session state. For example, once a user has been authenticated to the web server, the user's next HTTP request (GET or POST) should not cause the web server to ask for the user's account and password again. For a discussion of the methods used to accomplish this please see HTTP cookie.
+// http://en.wikipedia.org/wiki/Session_management
+// http://en.wikipedia.org/wiki/HTTP_cookie
 var store = sessions.NewCookieStore([]byte("something-very-secret"))
 
+func login(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session-name")
+	if session.Values["logged"] == true {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	} else {
+		if err := r.ParseForm(); err != nil {
+			serveError(w, err)
+			return
+		}
+		login := html.EscapeString(r.Form.Get("login"))
+		password := html.EscapeString(r.Form.Get("password"))
+		if login == "roman" && password == "pass111" {
+			session.Values["logged"] = true
+			fmt.Println("session values:", session.Values)
+			session.Save(r, w) // before redirect
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+		} else {
+			pageTemplate, err := template.ParseFiles("tpl/login.html", "tpl/header.html", "tpl/footer.html")
+			if err != nil {
+				log.Fatalf("execution failed: %s", err)
+				serveError(w, err)
+			}
+
+			tplValues := map[string]interface{}{"Header": "Login", "Copyright": "Roman Frołow"}
+			if session.Values["logged"] == true && session.Values["login"] != "" {
+				tplValues["login"] = session.Values["login"]
+			}
+
+			pageTemplate.Execute(w, tplValues)
+			if err != nil {
+				log.Fatalf("execution failed: %s", err)
+				serveError(w, err)
+			}
+		}
+	}
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session-name")
+	session.Values["logged"] = false
+	session.Save(r, w) // before redirect
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
 func products(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session-name")
+	tplValues := map[string]interface{}{"Header": "Products", "Copyright": "Roman Frołow"}
 	db, err := sql.Open("sqlite3", "./db/app.db")
 	if err != nil {
 		fmt.Println(err)
@@ -48,18 +111,21 @@ func products(w http.ResponseWriter, r *http.Request) {
 		rows.Scan(&title, &text, &price)
 		levels = append(levels, map[string]string{"title": title, "text": text, "price": price})
 	}
+	tplValues["levels"] = levels
 
 	rows.Close()
 
 	pageTemplate, err := template.ParseFiles("tpl/products.html", "tpl/header.html", "tpl/footer.html")
-
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 
-	pageTemplate.Execute(w, map[string]interface{}{"levels": levels, "Header": "Products", "Copyright": "Roman Frołow"})
+	if session.Values["logged"] == true && session.Values["login"] != "" {
+		tplValues["login"] = session.Values["login"]
+	}
 
+	pageTemplate.Execute(w, tplValues)
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
@@ -67,6 +133,8 @@ func products(w http.ResponseWriter, r *http.Request) {
 }
 
 func users(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session-name")
+	tplValues := map[string]interface{}{"Header": "Users", "Copyright": "Roman Frołow"}
 	db, err := sql.Open("sqlite3", "./db/app.db")
 	if err != nil {
 		fmt.Println(err)
@@ -90,17 +158,20 @@ func users(w http.ResponseWriter, r *http.Request) {
 		rows.Scan(&name1, &surname)
 		levels = append(levels, map[string]string{"name1": name1, "surname": surname})
 	}
+	tplValues["levels"] = levels
 	rows.Close()
 
 	pageTemplate, err := template.ParseFiles("tpl/users.html", "tpl/header.html", "tpl/footer.html")
-
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 
-	pageTemplate.Execute(w, map[string]interface{}{"levels": levels, "Header": "Users", "Copyright": "Roman Frołow"})
+	if session.Values["logged"] == true && session.Values["login"] != "" {
+		tplValues["login"] = session.Values["login"]
+	}
 
+	pageTemplate.Execute(w, tplValues)
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
@@ -138,18 +209,16 @@ func productsAdd(w http.ResponseWriter, r *http.Request) {
 		serveError(w, err)
 		return
 	}
+
 	defer stmt.Close()
-	// TODO
-	/*
-		if err := parseForm(r); err != nil {
-			serveError(w, err)
-			return
-		}
-	*/
-	r.ParseForm()
-	title := r.Form.Get("title")
-	text := r.Form.Get("text")
-	price := r.Form.Get("price")
+
+	if err := r.ParseForm(); err != nil {
+		serveError(w, err)
+		return
+	}
+	title := html.EscapeString(r.Form.Get("title"))
+	text := html.EscapeString(r.Form.Get("text"))
+	price := html.EscapeString(r.Form.Get("price"))
 
 	res, err := stmt.Exec(title, text, price)
 	if err != nil {
@@ -178,20 +247,18 @@ func productsAdd(w http.ResponseWriter, r *http.Request) {
 	// https://groups.google.com/forum/?fromgroups#!msg/golang-nuts/HeAoybScSTU/qxp1H7mWZVYJ
 	// The common practice is to redirect only after successful forms.
 	// So forms with errors are treated by the same POST request, and so have
-	//access to the data.
+	// access to the data.
 	http.Redirect(w, r, "/products", http.StatusSeeOther)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if r.Method != "GET" || r.URL.Path != "/" {
 		serve404(w)
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	session, _ := store.Get(r, "session-name")
-	last := session.Values["last_product"]
-	fmt.Println("last", last)
 
 	pageTemplate, err := template.ParseFiles("tpl/index.html", "tpl/header.html", "tpl/footer.html")
 	if err != nil {
@@ -199,7 +266,12 @@ func index(w http.ResponseWriter, r *http.Request) {
 		serveError(w, err)
 	}
 
-	pageTemplate.Execute(w, map[string]interface{}{"Header": "Home", "Copyright": "Roman Frołow"})
+	tplValues := map[string]interface{}{"Header": "Home", "Copyright": "Roman Frołow"}
+	if session.Values["logged"] == true && session.Values["login"] != "" {
+		tplValues["login"] = session.Values["login"]
+	}
+
+	pageTemplate.Execute(w, tplValues)
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
@@ -275,11 +347,15 @@ func main() {
 	// than 10KB of memory per connection and less than 2% of network overhead.
 	// www.eff.org/https-everywhere/faq
 
+	// no refferal with https?
+
 	//Not needed, because there is redirecting
 	//s := r.Schemes("https").Subrouter()
 	r.HandleFunc("/", http.HandlerFunc(index))
 	// trailing slash denotes a directory, while the lack of it denotes a file/resource
 	// http://techblog.bozho.net/?p=401
+	r.HandleFunc("/login", http.HandlerFunc(login))
+	r.HandleFunc("/logout", http.HandlerFunc(logout))
 	r.HandleFunc("/products", http.HandlerFunc(products))
 	r.HandleFunc("/products/add", http.HandlerFunc(productsAdd))
 	r.HandleFunc("/users", http.HandlerFunc(users))
