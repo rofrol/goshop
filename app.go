@@ -1,4 +1,4 @@
-//TODO:
+// TODO:
 // 1. Also for HTTP?: Zero Downtime upgrades of TCP servers in Go http://blog.nella.org/?p=879
 // 2. Nicer errror handling, maybe panic?
 // 3. Storing pictures of products, resizing
@@ -10,6 +10,23 @@
 // 9. oauth for registration
 // 10. pretty urls for products
 // 11. Test Riak for perfomrance http://blog.airbrake.io/status/planned-airbrake-migration-love-go-love-riak/
+// 12. free certifacte for tls
+// 13. spdy
+// 14. icon font
+// 15. ajax (backbone.js? knockout.js?)
+// 16. form validation, server and client-side
+// 17. normalize.css
+// 18. sticky footer
+// 19. ie > 8
+// 20. tdd, bdd, selenium - https://github.com/orfjackal/gospec http://go-lang.cat-v.org/pure-go-libs Testing
+// 21. session cookie time expiration?
+// 22. gzip
+// 23. security tips
+// 24. performance testing
+// 25. mobile site
+// 26. checkobox remember me - cookie only for opened window?
+// 27. pole login w users unique
+
 package main
 
 import (
@@ -41,31 +58,66 @@ import (
 // http://en.wikipedia.org/wiki/HTTP_cookie
 var store = sessions.NewCookieStore([]byte("something-very-secret"))
 
-func login(w http.ResponseWriter, r *http.Request) {
+func register(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		serveError(w, err)
+		return
+	}
 	session, _ := store.Get(r, "session-name")
-	if session.Values["logged"] == true {
+	if _, ok := session.Values["login"]; ok {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
-		if err := r.ParseForm(); err != nil {
-			serveError(w, err)
-			return
-		}
 		login := html.EscapeString(r.Form.Get("login"))
 		password := html.EscapeString(r.Form.Get("password"))
-		if login == "roman" && password == "pass111" {
-			session.Values["logged"] = true
-			fmt.Println("session values:", session.Values)
-			session.Save(r, w) // before redirect
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+		repassword := html.EscapeString(r.Form.Get("repassword"))
+		name1 := html.EscapeString(r.Form.Get("name1"))
+		name2 := html.EscapeString(r.Form.Get("name2"))
+		surname := html.EscapeString(r.Form.Get("surname"))
+		if password != "" && password == repassword && login != "admin" {
+			//if login available
+			//if password good enough
+			db, err := sql.Open("sqlite3", "./db/app.db")
+			if err != nil {
+				fmt.Println(err)
+				serveError(w, err)
+				return
+			}
+			defer db.Close()
+
+			stmt, err := db.Prepare("insert into users (login,password,name1,name2,surname) values (?,?,?,?,?)")
+			if err != nil {
+				fmt.Println(err)
+				serveError(w, err)
+				return
+			}
+
+			defer stmt.Close()
+
+			res, err := stmt.Exec(login, password, name1, name2, surname)
+			if err != nil {
+				fmt.Println(err)
+				serveError(w, err)
+				return
+			}
+			last, err := res.LastInsertId()
+			if err != nil {
+				fmt.Println(err)
+				serveError(w, err)
+				return
+			}
+			fmt.Println("last", last)
+
+			fmt.Println("Form.Values:", r.Form)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 		} else {
-			pageTemplate, err := template.ParseFiles("tpl/login.html", "tpl/header.html", "tpl/footer.html")
+			pageTemplate, err := template.ParseFiles("tpl/register.html", "tpl/header.html", "tpl/footer.html")
 			if err != nil {
 				log.Fatalf("execution failed: %s", err)
 				serveError(w, err)
 			}
 
-			tplValues := map[string]interface{}{"Header": "Login", "Copyright": "Roman Frołow"}
-			if session.Values["logged"] == true && session.Values["login"] != "" {
+			tplValues := map[string]interface{}{"Header": "Register", "Copyright": "Roman Frołow"}
+			if _, ok := session.Values["login"]; ok {
 				tplValues["login"] = session.Values["login"]
 			}
 
@@ -78,10 +130,86 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func login(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session-name")
+	fmt.Println("session values:", session.Values)
+	if err := r.ParseForm(); err != nil {
+		serveError(w, err)
+		return
+	}
+	login := html.EscapeString(r.Form.Get("login"))
+	password := html.EscapeString(r.Form.Get("password"))
+
+	if _, ok := session.Values["login"]; ok {
+		fmt.Println("zalogowany")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	} else if auth(login, password) {
+		session.Values["login"] = login
+		fmt.Println("session values:", session.Values)
+		session.Save(r, w) // run before redirect
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	} else {
+		pageTemplate, err := template.ParseFiles("tpl/login.html", "tpl/header.html", "tpl/footer.html")
+		if err != nil {
+			log.Fatalf("execution failed: %s", err)
+			serveError(w, err)
+		}
+
+		tplValues := map[string]interface{}{"Header": "Login", "Copyright": "Roman Frołow"}
+		if _, ok := session.Values["login"]; ok {
+			tplValues["login"] = session.Values["login"]
+		}
+
+		pageTemplate.Execute(w, tplValues)
+		if err != nil {
+			log.Fatalf("execution failed: %s", err)
+			serveError(w, err)
+		}
+	}
+
+}
+
+func auth(login string, password string) bool {
+	if login == "" || password == "" {
+		fmt.Println("brak loginu w Form")
+		return false
+	}
+
+	db, err := sql.Open("sqlite3", "./db/app.db")
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("select count(login) from users where login = ? and password = ?")
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	defer stmt.Close()
+
+	rows, err := stmt.Query(login, password)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	var count int
+	for rows.Next() {
+		rows.Scan(&count)
+	}
+
+	if count == 1 {
+		return true
+	}
+	return false
+}
+
 func logout(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session-name")
-	session.Values["logged"] = false
-	session.Save(r, w) // before redirect
+	delete(session.Values, "login")
+	session.Save(r, w) // run before redirect
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -121,7 +249,7 @@ func products(w http.ResponseWriter, r *http.Request) {
 		serveError(w, err)
 	}
 
-	if session.Values["logged"] == true && session.Values["login"] != "" {
+	if _, ok := session.Values["login"]; ok {
 		tplValues["login"] = session.Values["login"]
 	}
 
@@ -167,7 +295,7 @@ func users(w http.ResponseWriter, r *http.Request) {
 		serveError(w, err)
 	}
 
-	if session.Values["logged"] == true && session.Values["login"] != "" {
+	if _, ok := session.Values["login"]; ok {
 		tplValues["login"] = session.Values["login"]
 	}
 
@@ -267,7 +395,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tplValues := map[string]interface{}{"Header": "Home", "Copyright": "Roman Frołow"}
-	if session.Values["logged"] == true && session.Values["login"] != "" {
+	if _, ok := session.Values["login"]; ok {
 		tplValues["login"] = session.Values["login"]
 	}
 
@@ -326,11 +454,12 @@ func parseForm(r *http.Request) error {
 }
 
 func notlsHandler(w http.ResponseWriter, r *http.Request) {
-	fullUrl := "https://localhost:9999" + r.RequestURI
+	fmt.Println("in notlsHandler")
+	fullUrl := "https://localhost" + r.RequestURI
 	http.Redirect(w, r, fullUrl, http.StatusMovedPermanently)
 }
 
-var addr = flag.String("addr", ":9999", "http service address") // Q=17, R=18
+var addr = flag.String("addr", ":9000", "http service address") // Q=17, R=18
 
 func main() {
 	store.Options.Secure = true
@@ -352,9 +481,10 @@ func main() {
 	//Not needed, because there is redirecting
 	//s := r.Schemes("https").Subrouter()
 	r.HandleFunc("/", http.HandlerFunc(index))
-	// trailing slash denotes a directory, while the lack of it denotes a file/resource
+	// REST good practics: trailing slash denotes a directory, while the lack of it denotes a file/resource
 	// http://techblog.bozho.net/?p=401
 	r.HandleFunc("/login", http.HandlerFunc(login))
+	r.HandleFunc("/register", http.HandlerFunc(register))
 	r.HandleFunc("/logout", http.HandlerFunc(logout))
 	r.HandleFunc("/products", http.HandlerFunc(products))
 	r.HandleFunc("/products/add", http.HandlerFunc(productsAdd))
@@ -363,6 +493,8 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	// starting in goroutines with error reporting, thanks to davecheney from #go-nuts
+	// like this: http://serverfault.com/questions/67316/in-nginx-how-can-i-rewrite-all-http-requests-to-https-while-maintaining-sub-dom
+	// It will direct from http://localhost/users to https://localhost:9999/users, but not from http://localhost:9999/users
 	go func() {
 		log.Fatalf("ListenAndServe: %v", http.ListenAndServe(":8080", http.HandlerFunc(notlsHandler)))
 	}()
