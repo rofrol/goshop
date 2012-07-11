@@ -1,32 +1,3 @@
-// TODO:
-// 1. Also for HTTP?: Zero Downtime upgrades of TCP servers in Go http://blog.nella.org/?p=879
-// 2. Nicer errror handling, maybe panic?
-// 3. Storing pictures of products, resizing
-// 4. header function, so I don't have to get login from session every time template is executed. Also different meta keywords, titles.
-// 5. template caching
-// 6. reCaptcha
-// 7. account activation via email
-// 8. password and login recover
-// 9. oauth for registration
-// 10. pretty urls for products
-// 11. Test Riak for perfomrance http://blog.airbrake.io/status/planned-airbrake-migration-love-go-love-riak/
-// 12. free certifacte for tls
-// 13. spdy
-// 14. icon font
-// 15. ajax (backbone.js? knockout.js?)
-// 16. form validation, server and client-side
-// 17. normalize.css
-// 18. sticky footer
-// 19. ie > 8
-// 20. tdd, bdd, selenium - https://github.com/orfjackal/gospec http://go-lang.cat-v.org/pure-go-libs Testing
-// 21. session cookie time expiration?
-// 22. gzip
-// 23. security tips
-// 24. performance testing
-// 25. mobile site
-// 26. checkobox remember me - cookie only for opened window?
-// 27. pole login w users unique
-
 package main
 
 import (
