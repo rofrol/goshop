@@ -9,7 +9,7 @@
 9. oauth for registration
 10. pretty urls for products
 11. Test Riak for perfomrance http://blog.airbrake.io/status/planned-airbrake-migration-love-go-love-riak/
-12. free certifacte for tls
+12. free certificate for tls
 13. spdy
 14. icon font
 15. ajax (backbone.js? knockout.js?)
@@ -24,4 +24,4 @@
 24. performance testing
 25. mobile site
 26. checkobox remember me - cookie only for opened window?
-27. pole login w users unique
+27. field login in users table should be unique
