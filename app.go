@@ -1,8 +1,8 @@
 package main
 
 import (
-	"code.google.com/p/gorilla/mux"
-	"code.google.com/p/gorilla/sessions"
+	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"database/sql"
 	"errors"
 	"flag"
