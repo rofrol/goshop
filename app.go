@@ -70,6 +70,8 @@ func main() {
 		log.Fatalf("ListenAndServe: %v", http.ListenAndServe(":8080", http.HandlerFunc(notlsHandler)))
 	}()
 	go func() {
+		fmt.Println("https://localhost"+*addr)
+		// go run generate_cert.go --host localhost
 		log.Fatalf("ListenAndServeTLS: %v", http.ListenAndServeTLS(*addr, "tls/cert.pem", "tls/key.pem", nil))
 	}()
 	select {}
