@@ -49,7 +49,7 @@ func products(w http.ResponseWriter, r *http.Request) {
 		tplValues["login"] = session.Values["login"]
 	}
 
-	pageTemplate.Execute(w, tplValues)
+	err = pageTemplate.Execute(w, tplValues)
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
