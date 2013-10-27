@@ -1,4 +1,5 @@
-db/app.db
+*
+!*.go
+!*.html
+!*.sql
 db/populate.sql
-tls/cert.pem
-tls/key.pem
