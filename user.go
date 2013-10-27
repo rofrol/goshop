@@ -256,7 +256,7 @@ func users(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	sql := "select name1, surname from users order by surname"
+	sql := "select name1, name2, surname from users order by surname"
 	rows, err := db.Query(sql)
 	if err != nil {
 		fmt.Printf("%q: %s\n", err, sql)
@@ -266,10 +266,10 @@ func users(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	levels := []map[string]string{}
-	var name1, surname string
+	var name1, name2, surname string
 	for rows.Next() {
-		rows.Scan(&name1, &surname)
-		levels = append(levels, map[string]string{"name1": name1, "surname": surname})
+		rows.Scan(&name1, &name2, &surname)
+		levels = append(levels, map[string]string{"name1": name1, "name2": name2, "surname": surname})
 	}
 	tplValues["levels"] = levels
 	rows.Close()
