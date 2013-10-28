@@ -9,14 +9,6 @@
     <link rel="stylesheet" media="screen" href="/static/style.css" >
   </head>
   <body>
-    <a href="/">home</a> |
-    <a href="/products">products</a> |
-    {{if .login}}
-      {{.login}}
-      <a href="/logout">logout</a><br>
-    {{else}}
-      <a href="/login">login</a> |
-      <a href="/register">register</a>
-    {{end}}
+    <a href="/">home</a>
     <h1>{{.Header}}</h1>
 {{end}}

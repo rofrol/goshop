@@ -2,4 +2,5 @@
 !*.go
 !*.html
 !*.sql
+!tpl
 db/populate.sql

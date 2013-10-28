@@ -1,0 +1,41 @@
+<html>
+  {{template "header" .}}
+  <form action="/admin/products/add" method="post">
+    <table>
+      <tr>
+        <td>title</td>
+        <td><input type="text" size="30" name="title"></td>
+      </tr>
+      <tr>
+        <td>text</td>
+        <td><input type="text" size="30" name="text"></td>
+      </tr>
+      <tr>
+        <td>price</td>
+        <td><input type="text" size="30" name="price"></td>
+      </tr>
+      <tr>
+        <td colspan="2"><input type="submit" value="add product"></td>
+      </tr>
+    </table>
+  </form>
+  <table>
+    <thead>
+      <tr>
+        <th>title</th>
+        <th>text</th>
+        <th>price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range $h := .levels}}
+        <tr>
+          <td>{{$h.title}}</td>
+          <td>{{$h.title}}</td>
+          <td>{{$h.price}}</td>
+        </tr>
+      {{end}}
+    </tbody>
+  </table>
+  {{template "footer" .}}
+</html>

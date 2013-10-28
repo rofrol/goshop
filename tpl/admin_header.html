@@ -10,13 +10,14 @@
   </head>
   <body>
     <a href="/">home</a> |
-    <a href="/products">products</a> |
-    {{if .login}}
-      {{.login}}
-      <a href="/logout">logout</a><br>
+    <a href="/admin">admin home</a> |
+    <a href="/admin/products">products</a> |
+    <a href="/admin/users">users</a> |
+    {{if .admin_login}}
+      {{.admin_login}}
+      <a href="/admin/logout">logout</a><br>
     {{else}}
-      <a href="/login">login</a> |
-      <a href="/register">register</a>
+      <a href="/admin/login">login</a>
     {{end}}
     <h1>{{.Header}}</h1>
 {{end}}

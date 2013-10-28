@@ -10,6 +10,7 @@ import (
 	"html/template"
 	"log"
 )
+
 func loginAvailable(login string) bool {
 	if login == "" {
 		fmt.Println("Pusty login.")
@@ -244,50 +245,3 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	session.Save(r, w) // run before redirect
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-
-func users(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "session-name")
-	tplValues := map[string]interface{}{"Header": "Users", "Copyright": "Roman Frołow"}
-	db, err := sql.Open("sqlite3", "./db/app.db")
-	if err != nil {
-		fmt.Println(err)
-		serveError(w, err)
-		return
-	}
-	defer db.Close()
-
-	sql := "select name1, name2, surname from users order by surname"
-	rows, err := db.Query(sql)
-	if err != nil {
-		fmt.Printf("%q: %s\n", err, sql)
-		serveError(w, err)
-		return
-	}
-	defer rows.Close()
-
-	levels := []map[string]string{}
-	var name1, name2, surname string
-	for rows.Next() {
-		rows.Scan(&name1, &name2, &surname)
-		levels = append(levels, map[string]string{"name1": name1, "name2": name2, "surname": surname})
-	}
-	tplValues["levels"] = levels
-	rows.Close()
-
-	pageTemplate, err := template.ParseFiles("tpl/users.html", "tpl/header.html", "tpl/footer.html")
-	if err != nil {
-		log.Fatalf("execution failed: %s", err)
-		serveError(w, err)
-	}
-
-	if _, ok := session.Values["login"]; ok {
-		tplValues["login"] = session.Values["login"]
-	}
-
-	pageTemplate.Execute(w, tplValues)
-	if err != nil {
-		log.Fatalf("execution failed: %s", err)
-		serveError(w, err)
-	}
-}
-

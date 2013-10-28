@@ -1,0 +1,19 @@
+<html>
+  {{template "header" .}}
+  <form action="/admin/login" method="post">
+    <table>
+      <tr>
+        <td>admin login</td>
+        <td><input type="text" size="30" name="admin_login" value="{{.admin_login}}"></td>
+      </tr>
+      <tr>
+        <td>password</td>
+        <td><input type="password" size="30" name="password"></td>
+      </tr>
+      <tr>
+        <td colspan="2"><input type="submit" value="login"></td>
+      </tr>
+    </table>
+  </form>
+  {{template "footer" .}}
+</html>
