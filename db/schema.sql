@@ -5,7 +5,8 @@ CREATE TABLE products (
   id integer primary key autoincrement,
   title string not null,
   text string not null,
-  price float not null
+  price float not null,
+  quantity integer not null default 0
 );
 drop table if exists users;
 CREATE TABLE users (

@@ -15,6 +15,10 @@
         <td><input type="text" size="30" name="price"></td>
       </tr>
       <tr>
+        <td>quantity</td>
+        <td><input type="text" size="30" name="quantity"></td>
+      </tr>
+      <tr>
         <td colspan="2"><input type="submit" value="add product"></td>
       </tr>
     </table>
@@ -25,14 +29,16 @@
         <th>title</th>
         <th>text</th>
         <th>price</th>
+        <th>quantity</th>
       </tr>
     </thead>
     <tbody>
       {{range $h := .levels}}
         <tr>
           <td>{{$h.title}}</td>
-          <td>{{$h.title}}</td>
+          <td>{{$h.text}}</td>
           <td>{{$h.price}}</td>
+          <td>{{$h.quantity}}</td>
         </tr>
       {{end}}
     </tbody>

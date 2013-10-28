@@ -33,7 +33,7 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	sql := "select title, text, price from products order by title"
+	sql := "select title, text, price, quantity from products order by title"
 	rows, err := db.Query(sql)
 	if err != nil {
 		fmt.Printf("%q: %s\n", err, sql)
@@ -43,10 +43,10 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	levels := []map[string]string{}
-	var title, text, price string
+	var title, text, price, quantity string
 	for rows.Next() {
-		rows.Scan(&title, &text, &price)
-		levels = append(levels, map[string]string{"title": title, "text": text, "price": price})
+		rows.Scan(&title, &text, &price, &quantity)
+		levels = append(levels, map[string]string{"title": title, "text": text, "price": price, "quantity": quantity})
 	}
 	tplValues["levels"] = levels
 
@@ -94,7 +94,7 @@ func admin_products_add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stmt, err := tx.Prepare("insert into products(title, text, price) values(?, ?, ?)")
+	stmt, err := tx.Prepare("insert into products(title, text, price, quantity) values(?, ?, ?, ?)")
 	if err != nil {
 		fmt.Println(err)
 		serveError(w, err)
@@ -110,7 +110,8 @@ func admin_products_add(w http.ResponseWriter, r *http.Request) {
 	title := html.EscapeString(r.Form.Get("title"))
 	text := html.EscapeString(r.Form.Get("text"))
 	price := html.EscapeString(r.Form.Get("price"))
-	res, err := stmt.Exec(title, text, price)
+	quantity := html.EscapeString(r.Form.Get("quantity"))
+	res, err := stmt.Exec(title, text, price, quantity)
 	if err != nil {
 		fmt.Println(err)
 		serveError(w, err)
