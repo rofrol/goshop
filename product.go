@@ -11,7 +11,7 @@ import(
 func products(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session-name")
 	tplValues := map[string]interface{}{"Header": "Products", "Copyright": "Roman Frołow"}
-	db, err := sql.Open("sqlite3", "./db/app.db")
+	db, err := sql.Open("sqlite3", "file:./db/app.db?foreign_keys=true")
 	if err != nil {
 		fmt.Println(err)
 		serveError(w, err)

@@ -24,7 +24,7 @@ func admin_users(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 	}
 
-	db, err := sql.Open("sqlite3", "./db/app.db")
+	db, err := sql.Open("sqlite3", "file:./db/app.db?foreign_keys=true")
 	if err != nil {
 		fmt.Println(err)
 		serveError(w, err)
@@ -32,7 +32,7 @@ func admin_users(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	sql := "select name1, name2, surname from users order by surname"
+	sql := "select login, password, name1, name2, surname from users order by login"
 	rows, err := db.Query(sql)
 	if err != nil {
 		fmt.Printf("%q: %s\n", err, sql)
@@ -42,15 +42,15 @@ func admin_users(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	levels := []map[string]string{}
-	var name1, name2, surname string
+	var login, password, name1, name2, surname string
 	for rows.Next() {
-		rows.Scan(&name1, &name2, &surname)
-		levels = append(levels, map[string]string{"name1": name1, "name2": name2, "surname": surname})
+		rows.Scan(&login, &password, &name1, &name2, &surname)
+		levels = append(levels, map[string]string{"login": login, "password": password, "name1": name1, "name2": name2, "surname": surname})
 	}
 	tplValues["levels"] = levels
 	rows.Close()
 
-	pageTemplate, err := template.ParseFiles("tpl/users.html", "tpl/admin_header.html", "tpl/footer.html")
+	pageTemplate, err := template.ParseFiles("tpl/admin_users.html", "tpl/admin_header.html", "tpl/footer.html")
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)

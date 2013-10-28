@@ -25,7 +25,7 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 	}
 
-	db, err := sql.Open("sqlite3", "./db/app.db")
+	db, err := sql.Open("sqlite3", "file:./db/app.db?foreign_keys=true")
 	if err != nil {
 		fmt.Println(err)
 		serveError(w, err)
@@ -79,7 +79,7 @@ func admin_products_add(w http.ResponseWriter, r *http.Request) {
 	  flash('New product was successfully added')
 	  return redirect(url_for('show_products'))
 	*/
-	db, err := sql.Open("sqlite3", "./db/app.db")
+	db, err := sql.Open("sqlite3", "file:./db/app.db?foreign_keys=true")
 	if err != nil {
 		fmt.Println(err)
 		serveError(w, err)
@@ -110,7 +110,6 @@ func admin_products_add(w http.ResponseWriter, r *http.Request) {
 	title := html.EscapeString(r.Form.Get("title"))
 	text := html.EscapeString(r.Form.Get("text"))
 	price := html.EscapeString(r.Form.Get("price"))
-
 	res, err := stmt.Exec(title, text, price)
 	if err != nil {
 		fmt.Println(err)

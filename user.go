@@ -17,7 +17,7 @@ func loginAvailable(login string) bool {
 		return false
 	}
 
-	db, err := sql.Open("sqlite3", "./db/app.db")
+	db, err := sql.Open("sqlite3", "file:./db/app.db?foreign_keys=true")
 	if err != nil {
 		fmt.Println(err)
 		return false
@@ -76,12 +76,13 @@ func register(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session-name")
 
 	if logged(r, store) {
+		fmt.Println("logged")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else if req := params(r, "login", "password", "repassword", "name1", "name2", "surname"); regParamsValid(req) {
 
 		//if password good enough
 
-		db, err := sql.Open("sqlite3", "./db/app.db")
+		db, err := sql.Open("sqlite3", "file:./db/app.db?foreign_keys=true")
 		if err != nil {
 			fmt.Println(err)
 			serveError(w, err)
@@ -123,8 +124,8 @@ func register(w http.ResponseWriter, r *http.Request) {
 		}
 
 		tplValues := map[string]interface{}{"Header": "Register", "Copyright": "Roman Frołow"}
-		if _, ok := session.Values["login"]; ok {
-			tplValues["login"] = session.Values["login"]
+		if i, ok := session.Values["login"]; ok {
+			tplValues["login"] = i
 		}
 
 		pageTemplate.Execute(w, tplValues)
@@ -208,7 +209,7 @@ func auth(login string, password string) bool {
 		return false
 	}
 
-	db, err := sql.Open("sqlite3", "./db/app.db")
+	db, err := sql.Open("sqlite3", "file:./db/app.db?foreign_keys=true")
 	if err != nil {
 		fmt.Println(err)
 		return false

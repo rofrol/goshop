@@ -16,7 +16,7 @@ import (
 	"fmt"
 )
 
-func main() {
+func nomain() {
 	var i map[string]interface{}
 	b := []byte(`{"a":{"b":12,"c":22,"d":[1,2,3,4,5]}}`)
 	json.Unmarshal(b, &i)
@@ -27,7 +27,6 @@ func main() {
 	r := map[string]string{}
 	r["login"] = "jan"
 	v := map[interface{}]interface{}{}
-	v["req"] = req
 	req := v["req"]
 	fmt.Println(req.(map[string]string)["login"])
 }

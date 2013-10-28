@@ -3,4 +3,5 @@
 !*.html
 !*.sql
 !tpl
+!db
 db/populate.sql
