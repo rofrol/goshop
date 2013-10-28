@@ -32,3 +32,11 @@ create unique index users_u on users(login);
 
 insert into users (login,password,name1,name2,surname) values ('admin','adminp','admin1','admin2','admin3');
 COMMIT;
+
+-- in ~/.sqliterc
+-- .mode column
+-- .headers ON
+-- http://www.infinitezest.com/articles/creating-user-friendly-output-from-sqlite.aspx
+
+-- .schema
+-- .tables
