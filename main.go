@@ -72,6 +72,9 @@ func main() {
 	go func() {
 		fmt.Println("https://localhost"+*addr)
 		// go run generate_cert.go --host localhost
+		// this works for other domain than localhost, no need to supply domain name:
+		// openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes
+		// http://stackoverflow.com/questions/10175812/how-to-build-a-self-signed-certificate-with-openssl
 		log.Fatalf("ListenAndServeTLS: %v", http.ListenAndServeTLS(*addr, "tls/cert.pem", "tls/key.pem", nil))
 	}()
 	select {}
