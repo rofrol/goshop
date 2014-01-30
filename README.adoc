@@ -25,7 +25,8 @@ Download css and js
 
 ----
 wget http://foundation.zurb.com/cdn/releases/foundation-5.0.3.zip
-unzip foundation-5.0.3.zip -d static
+unzip foundation-5.0.3.zip -d static/foundation
+rm foundation-5.0.3.zip
 ----
 
 Run it
