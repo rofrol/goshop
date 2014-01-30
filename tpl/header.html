@@ -16,7 +16,11 @@
   </head>
   <body>
 
-    {{template "bar" .}}
+    <div class="contain-to-grid fixed">
+      <nav class="top-bar" data-topbar="">
+        {{template "bar" .}}
+      </nav>
+    </div>
 
     <div class="row">
       <div class="large-12 columns">
