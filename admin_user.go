@@ -22,6 +22,7 @@ func admin_users(w http.ResponseWriter, r *http.Request) {
 
 	if ! authorized {
 		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
+		return
 	}
 
 	db, err := sql.Open("sqlite3", "file:./db/app.db?foreign_keys=true")
