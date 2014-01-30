@@ -38,9 +38,7 @@ go install
 goshop
 ----
 
-== Go
-
-=== Managing versions
+== Go - Managing versions
 
 Q: How about automatic version managment in go?
 A: Versioning cannot be correctly done automatically for non trivial cases. The trivial cases are few minutes of manual work.
@@ -52,3 +50,24 @@ Q: where does the convention of package names being the major version come from?
 A: It comes from Rob Pike and the core Go development team. See the FAQ http://golang.org/doc/faq#get_version . He doesn't state it like I do though; but, the end result is the same. According to semver, if you make a breaking, incompatible change, you bump the 1st semver number. According to Go community convention, if you make a breaking change, you are advised to call your package a new name. The syntax of the "name" may be different, but the core ideas are the same.
 
 https://plus.google.com/113468371879331813621/posts/P4rcZAsHPTB
+
+== HTTP Redirect
+
+Remember to add return after Redirect, if you want to exit function.
+
+----
+	http.Redirect(w, r, "/admin/products", http.StatusSeeOther)
+	return
+----
+
+http://en.wikipedia.org/wiki/Post/Redirect/Get
+
+http://en.wikipedia.org/wiki/HTTP_303
+
+303 for HTTP 1.1, maybe problem with old corporate proxies, so 302 could be better
+http://stackoverflow.com/questions/46582/response-redirect-with-post-instead-of-get
+
+The common practice is to redirect only after successful forms.
+So forms with errors are treated by the same POST request, and so have
+access to the data.
+https://groups.google.com/forum/?fromgroups#!msg/golang-nuts/HeAoybScSTU/qxp1H7mWZVYJ

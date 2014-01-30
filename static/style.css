@@ -1,2 +1,7 @@
 #footer {margin-top:10px;}
 th{text-align:left;}
+.error-message {
+	border: 1px solid red;
+	margin-bottom: 1em;
+	padding: 1em 1em 0 1em;
+}

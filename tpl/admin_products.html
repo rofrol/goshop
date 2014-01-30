@@ -1,4 +1,11 @@
 {{template "header" .}}
+{{if .message}}
+<div class="row">
+  <div class="large-12 columns error-message">
+    {{.message}}
+  </div>
+</div>
+{{end}}
 <form action="/admin/products/add" method="post">
   <div class="row">
     <div class="large-12 columns">
