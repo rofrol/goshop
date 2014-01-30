@@ -1,30 +1,20 @@
 {{define "header"}}
-<!DOCTYPE html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en" >
 <html>
   <head lang="pl">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title dir="ltr">{{.Header}} - shop</title>
-    <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" media="screen" href="/static/style.css" >
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+    <!-- foundation -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/foundation/css/normalize.css">
+    <link rel="stylesheet" href="/static/foundation/css/foundation.css" />
+    <script src="/static/foundation/js/vendor/modernizr.js"></script>
+    <!-- /foundation -->
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
   </head>
   <body>
-    <a href="/">home</a> |
-    <a href="/products">products</a> |
-    {{if .login}}
-      {{.login}}
-      <a href="/logout">logout</a><br>
-    {{else}}
-      <a href="/login">login</a> |
-      <a href="/register">register</a>
-    {{end}}
-    <h1>{{.Header}}</h1>
+  {{template "bar" .}}
 {{end}}

@@ -1,0 +1,14 @@
+{{define "bar"}}
+    <a href="/">home</a> |
+    <a href="/admin">admin home</a> |
+    <a href="/admin/products">products</a> |
+    <a href="/admin/users">users</a> |
+    <a href="/admin/orders">orders</a> |
+    {{if .admin_login}}
+      {{.admin_login}}
+      <a href="/admin/logout">logout</a><br>
+    {{else}}
+      <a href="/admin/login">login</a>
+    {{end}}
+    <h1>{{.Header}}</h1>
+{{end}}

@@ -18,9 +18,22 @@ mkdir -p $ROFROL
 cd $ROFROL
 git clone https://github.com/rofrol/goshop
 cd goshop
+----
+
+
+Download css and js
+
+----
+wget http://foundation.zurb.com/cdn/releases/foundation-5.0.3.zip
+unzip foundation-5.0.3.zip -d static
+----
+
+Run it
+
+----
 sh db/init.sh
 go get .
-go build
+go install
 goshop
 ----
 

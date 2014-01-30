@@ -50,7 +50,7 @@ func admin_users(w http.ResponseWriter, r *http.Request) {
 	tplValues["levels"] = levels
 	rows.Close()
 
-	pageTemplate, err := template.ParseFiles("tpl/admin_users.html", "tpl/admin_header.html", "tpl/footer.html")
+	pageTemplate, err := template.ParseFiles("tpl/admin_users.html", "tpl/header.html", "tpl/admin_bar.html", "tpl/footer.html")
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)

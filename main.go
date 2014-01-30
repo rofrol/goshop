@@ -94,7 +94,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "session-name")
 
-	pageTemplate, err := template.ParseFiles("tpl/index.html", "tpl/header.html", "tpl/footer.html")
+	pageTemplate, err := template.ParseFiles("tpl/index.html", "tpl/header.html", "tpl/bar.html", "tpl/footer.html")
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)

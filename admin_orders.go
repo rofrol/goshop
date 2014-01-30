@@ -51,7 +51,7 @@ func admin_orders(w http.ResponseWriter, r *http.Request) {
 
 	rows.Close()
 
-	pageTemplate, err := template.ParseFiles("tpl/admin_orders.html", "tpl/admin_header.html", "tpl/footer.html")
+	pageTemplate, err := template.ParseFiles("tpl/admin_orders.html", "tpl/header.html", "tpl/admin_bar.html", "tpl/footer.html")
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
