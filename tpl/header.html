@@ -1,10 +1,9 @@
 {{define "header"}}
+<!DOCTYPE html>
 <!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
 <html class="no-js" lang="en" >
-<html>
-  <head lang="pl">
+  <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title dir="ltr">{{.Header}} - shop</title>
 
     <!-- foundation -->
@@ -17,16 +16,11 @@
   </head>
   <body>
 
-  <div class="row">
-    <div class="large-12 columns">
-  {{template "bar" .}}
-    </div>
-  </div>
+    {{template "bar" .}}
 
-  <div class="row">
-    <div class="large-12 columns">
-      <h1>{{.Header}}</h1>
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>{{.Header}}</h1>
+      </div>
     </div>
-  </div>
-
 {{end}}
