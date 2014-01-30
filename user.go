@@ -117,7 +117,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		session.Save(r, w) // run before redirect
 		http.Redirect(w, r, "/registered", http.StatusSeeOther)
 	} else {
-		pageTemplate, err := template.ParseFiles("tpl/register.html", "tpl/header.html", "tpl/footer.html")
+		pageTemplate, err := template.ParseFiles("tpl/register.html", "tpl/header.html", "tpl/bar.html", "tpl/footer.html")
 		if err != nil {
 			log.Fatalf("execution failed: %s", err)
 			serveError(w, err)
@@ -139,7 +139,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 func registered(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session-name")
 
-	pageTemplate, err := template.ParseFiles("tpl/registered.html", "tpl/header.html", "tpl/footer.html")
+	pageTemplate, err := template.ParseFiles("tpl/registered.html", "tpl/header.html", "tpl/bar.html", "tpl/footer.html")
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
@@ -183,7 +183,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		session.Save(r, w) // run before redirect
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
-		pageTemplate, err := template.ParseFiles("tpl/login.html", "tpl/header.html", "tpl/footer.html")
+		pageTemplate, err := template.ParseFiles("tpl/login.html", "tpl/header.html", "tpl/bar.html", "tpl/footer.html")
 		if err != nil {
 			log.Fatalf("execution failed: %s", err)
 			serveError(w, err)
