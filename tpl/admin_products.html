@@ -1,25 +1,25 @@
 <html>
   {{template "header" .}}
-  <form action="/admin/products/add" method="post">
+  <form action="/admin/products/add" method="post" role="form">
     <table>
       <tr>
         <td>title</td>
-        <td><input type="text" size="30" name="title"></td>
+        <td><input type="text" size="30" name="title" class="form-control"></td>
       </tr>
       <tr>
         <td>text</td>
-        <td><input type="text" size="30" name="text"></td>
+        <td><input type="text" size="30" name="text" class="form-control"></td>
       </tr>
       <tr>
         <td>price</td>
-        <td><input type="text" size="30" name="price"></td>
+        <td><input type="text" size="30" name="price" class="form-control"></td>
       </tr>
       <tr>
         <td>quantity</td>
-        <td><input type="text" size="30" name="quantity"></td>
+        <td><input type="text" size="30" name="quantity" class="form-control"></td>
       </tr>
       <tr>
-        <td colspan="2"><input type="submit" value="add product"></td>
+        <td colspan="2"><input class="btn btn-lg btn-default" type="submit" value="add product"></td>
       </tr>
     </table>
   </form>

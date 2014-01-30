@@ -2,6 +2,7 @@
 !*.go
 !*.html
 !*.sql
+!*.adoc
 !tpl
 !db
 db/populate.sql

@@ -1,0 +1,39 @@
+= goshop
+
+Prepare go
+
+----
+GOPATH=~/projects/go/src/github.com/rofrol
+mkdir -p $GOPATH/src
+echo "export GOPATH=$GOPATH" >> ~/.bash_profile
+echo "export PATH=\$PATH:$GOPATH/bin" >> ~/.bash_profile
+source ~/.bash_profile
+----
+
+goshop download
+
+----
+GOSHOP="$GOPATH/src/github.com/rofrol"
+mkdir -p $ROFROL
+cd $ROFROL
+git clone https://github.com/rofrol/goshop
+cd goshop
+go get .
+go build
+goshop
+----
+
+== Go
+
+=== Managing versions
+
+Q: How about automatic version managment in go?
+A: Versioning cannot be correctly done automatically for non trivial cases. The trivial cases are few minutes of manual work.
+
+Q: What is the proper way to manage two different versions of the same package
+A: The name of a package is equivalent to the first number of a semantic version -- e.g., a package foo exposes a backward compatible interface always and forever. If a breaking change becomes necessary, the name of the package changes to, e.g., foo2 or something.
+
+Q: where does the convention of package names being the major version come from? That is to use foo, foo2, foo3, etc.
+A: It comes from Rob Pike and the core Go development team. See the FAQ http://golang.org/doc/faq#get_version . He doesn't state it like I do though; but, the end result is the same. According to semver, if you make a breaking, incompatible change, you bump the 1st semver number. According to Go community convention, if you make a breaking change, you are advised to call your package a new name. The syntax of the "name" may be different, but the core ideas are the same.
+
+https://plus.google.com/113468371879331813621/posts/P4rcZAsHPTB
