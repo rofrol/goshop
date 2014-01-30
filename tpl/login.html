@@ -1,17 +1,19 @@
 {{template "header" .}}
 <form action="/login" method="post">
-  <table>
-    <tr>
-      <td>login</td>
-      <td><input type="text" size="30" name="login" value="{{.login}}"></td>
-    </tr>
-    <tr>
-      <td>password</td>
-      <td><input type="password" size="30" name="password"></td>
-    </tr>
-    <tr>
-      <td colspan="2"><input type="submit" value="login"></td>
-    </tr>
-  </table>
+  <div class="row">
+    <div class="large-12 columns">
+      <input type="text" placeholder="login" name="login" value="{{.login}}"></input>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <input type="text" placeholder="password" name="password"></input>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <input class="small radius button" type="submit" value="login"></input>
+    </div>
+  </div>
 </form>
 {{template "footer" .}}

@@ -189,7 +189,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			serveError(w, err)
 		}
 
-		tplValues := map[string]interface{}{"Header": "Login", "Copyright": "Roman Frołow"}
+		tplValues := map[string]interface{}{"Header": "User", "Copyright": "Roman Frołow"}
 		if _, ok := session.Values["login"]; ok {
 			tplValues["login"] = session.Values["login"]
 		}
