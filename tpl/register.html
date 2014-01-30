@@ -1,35 +1,33 @@
-<html>
-  {{template "header" .}}
-  <form action="/register" method="post">
-    <table>
-      <tr>
-        <td>login</td>
-        <td><input type="text" size="30" name="login" value="{{.login}}"></td>
-      </tr>
-      <tr>
-        <td>password</td>
-        <td><input type="password" size="30" name="password"></td>
-      </tr>
-      <tr>
-        <td>repassword</td>
-        <td><input type="password" size="30" name="repassword"></td>
-      </tr>
-      <tr>
-        <td>name1</td>
-        <td><input type="text" size="30" name="name1" value="{{.name1}}"></td>
-      </tr>
-      <tr>
-        <td>name2</td>
-        <td><input type="text" size="30" name="name2" value="{{.name2}}"></td>
-      </tr>
-      <tr>
-        <td>surname</td>
-        <td><input type="text" size="30" name="surname" value="{{.surname}}"></td>
-      </tr>
-      <tr>
-        <td colspan="2"><input type="submit" value="register"></td>
-      </tr>
-    </table>
-  </form>
-  {{template "footer" .}}
-</html>
+{{template "header" .}}
+<form action="/register" method="post">
+  <table>
+    <tr>
+      <td>login</td>
+      <td><input type="text" size="30" name="login" value="{{.login}}"></td>
+    </tr>
+    <tr>
+      <td>password</td>
+      <td><input type="password" size="30" name="password"></td>
+    </tr>
+    <tr>
+      <td>repassword</td>
+      <td><input type="password" size="30" name="repassword"></td>
+    </tr>
+    <tr>
+      <td>name1</td>
+      <td><input type="text" size="30" name="name1" value="{{.name1}}"></td>
+    </tr>
+    <tr>
+      <td>name2</td>
+      <td><input type="text" size="30" name="name2" value="{{.name2}}"></td>
+    </tr>
+    <tr>
+      <td>surname</td>
+      <td><input type="text" size="30" name="surname" value="{{.surname}}"></td>
+    </tr>
+    <tr>
+      <td colspan="2"><input type="submit" value="register"></td>
+    </tr>
+  </table>
+</form>
+{{template "footer" .}}
