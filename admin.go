@@ -33,13 +33,13 @@ func admin_login(w http.ResponseWriter, r *http.Request) {
 		session.Save(r, w) // run before redirect
 		http.Redirect(w, r, "/admin", http.StatusSeeOther)
 	} else {
-		pageTemplate, err := template.ParseFiles("tpl/admin_login.html", "tpl/header.html", "tpl/admin_bar.html", "tpl/footer.html")
+		pageTemplate, err := template.ParseFiles("tpl/admin_login.html", "tpl/header.html", "tpl/admin_bar_notlogged.html", "tpl/footer.html")
 		if err != nil {
 			log.Fatalf("execution failed: %s", err)
 			serveError(w, err)
 		}
 
-		tplValues := map[string]interface{}{"Header": "Admin Login", "Copyright": "Roman Frołow"}
+		tplValues := map[string]interface{}{"Header": "Admin", "Copyright": "Roman Frołow"}
 		if _, ok := session.Values["login"]; ok {
 			tplValues["admin_login"] = session.Values["admin_login"]
 		}
