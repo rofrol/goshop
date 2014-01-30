@@ -10,6 +10,31 @@ import (
 	"log"
 )
 
+func getProducts() ([]map[string]string, error) {
+	db, err := sql.Open("sqlite3", "file:./db/app.db?foreign_keys=true")
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer db.Close()
+
+	sql := "select title, text, price, quantity from products order by title"
+	rows, err := db.Query(sql)
+	if err != nil {
+		fmt.Printf("%q: %s\n", err, sql)
+		return nil, err
+	}
+	defer rows.Close()
+
+	levels := []map[string]string{}
+	var title, text, price, quantity string
+	for rows.Next() {
+		rows.Scan(&title, &text, &price, &quantity)
+		levels = append(levels, map[string]string{"title": title, "text": text, "price": price, "quantity": quantity})
+	}
+	return levels, nil
+}
+
 func admin_products(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session-name")
 	tplValues := map[string]interface{}{"Header": "Products", "Copyright": "Roman Frołow"}
@@ -25,33 +50,13 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
-
-	db, err := sql.Open("sqlite3", "file:./db/app.db?foreign_keys=true")
-	if err != nil {
-		fmt.Println(err)
-		serveError(w, err)
-		return
-	}
-	defer db.Close()
-
-	sql := "select title, text, price, quantity from products order by title"
-	rows, err := db.Query(sql)
-	if err != nil {
-		fmt.Printf("%q: %s\n", err, sql)
-		serveError(w, err)
-		return
-	}
-	defer rows.Close()
-
-	levels := []map[string]string{}
-	var title, text, price, quantity string
-	for rows.Next() {
-		rows.Scan(&title, &text, &price, &quantity)
-		levels = append(levels, map[string]string{"title": title, "text": text, "price": price, "quantity": quantity})
-	}
+	//err := error.New()
+	levels, err := getProducts()
 	tplValues["levels"] = levels
-
-	rows.Close()
+	if err != nil {
+		log.Fatalf("execution failed: %s", err)
+		serveError(w, err)
+	}
 
 	pageTemplate, err := template.ParseFiles("tpl/admin_products.html", "tpl/header.html", "tpl/admin_bar.html", "tpl/footer.html")
 	if err != nil {
@@ -177,9 +182,5 @@ func admin_products_add(w http.ResponseWriter, r *http.Request) {
 	session.Values["last_product"] = last
 	session.Save(r, w)
 
-	err = pageTemplate.Execute(w, tplValues)
-	if err != nil {
-		log.Fatalf("execution failed: %s", err)
-		serveError(w, err)
-	}
+	http.Redirect(w, r, "/admin/products", http.StatusSeeOther)
 }
