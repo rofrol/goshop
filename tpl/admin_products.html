@@ -1,48 +1,57 @@
-<html>
-  {{template "header" .}}
-  <form action="/admin/products/add" method="post" role="form">
-    <table>
-      <tr>
-        <td>title</td>
-        <td><input type="text" size="30" name="title" class="form-control"></td>
-      </tr>
-      <tr>
-      <tr>
-        <td>text</td>
-        <td><input type="text" size="30" name="text" class="form-control"></td>
-      </tr>
-      <tr>
-        <td>price</td>
-        <td><input type="text" size="30" name="price" class="form-control"></td>
-      </tr>
-      <tr>
-        <td>quantity</td>
-        <td><input type="text" size="30" name="quantity" class="form-control"></td>
-      </tr>
-      <tr>
-        <td colspan="2"><input class="small radius button" type="submit" value="add product"></td>
-      </tr>
-    </table>
-  </form>
-  <table>
-    <thead>
-      <tr>
-        <th>title</th>
-        <th>text</th>
-        <th>price</th>
-        <th>quantity</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{range $h := .levels}}
+{{template "header" .}}
+<form action="/admin/products/add" method="post">
+  <div class="row">
+    <div class="large-12 columns">
+      <label>title</label>
+      <input type="text" placeholder="product title"></input>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>price</label>
+      <input type="text" placeholder="product price"></input>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>quantity</label>
+      <input type="text" placeholder="product quantity"></input>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>title</label>
+      <input type="text" placeholder="product title"></input>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <input class="small radius button" type="submit" value="add product">
+    </div>
+  </div>
+</form>
+<div class="row">
+  <div class="large-12 columns">
+    <table style="width: 100%">
+      <thead>
+        <tr>
+          <th>title</th>
+          <th>text</th>
+          <th>price</th>
+          <th>quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range $h := .levels}}
         <tr>
           <td>{{$h.title}}</td>
           <td>{{$h.text}}</td>
           <td>{{$h.price}}</td>
           <td>{{$h.quantity}}</td>
         </tr>
-      {{end}}
-    </tbody>
-  </table>
-  {{template "footer" .}}
-</html>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{template "footer" .}}

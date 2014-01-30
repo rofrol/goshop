@@ -38,7 +38,7 @@ func products(w http.ResponseWriter, r *http.Request) {
 
 	rows.Close()
 
-	pageTemplate, err := template.ParseFiles("tpl/products.html", "tpl/header.html", "tpl/footer.html")
+	pageTemplate, err := template.ParseFiles("tpl/products.html", "tpl/header.html", "tpl/bar.html", "tpl/footer.html")
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)

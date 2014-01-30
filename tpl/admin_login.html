@@ -1,19 +1,22 @@
-<html>
-  {{template "header" .}}
-  <form action="/admin/login" method="post" autocomplete="off">
-    <table>
-      <tr>
-        <td>admin login</td>
-        <td><input type="text" size="30" name="admin_login" value="{{.admin_login}}"></td>
-      </tr>
-      <tr>
-        <td>password</td>
-        <td><input type="password" size="30" name="password"></td>
-      </tr>
-      <tr>
-        <td colspan="2"><input type="submit" value="login"></td>
-      </tr>
-    </table>
-  </form>
-  {{template "footer" .}}
-</html>
+{{template "header" .}}
+<form action="/admin/login" method="post" autocomplete="off">
+  <div class="row">
+    <div class="large-12 columns">
+      <label>admin login</label>
+      <input type="text" placeholder="admin login" name="admin_login" value="{{.admin_login}}"></input>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>admin login</label>
+      <input type="text" placeholder="admin login" name="password"></input>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>admin login</label>
+      <input class="small radius button" type="submit" value="login"></input>
+    </div>
+  </div>
+</form>
+{{template "footer" .}}
