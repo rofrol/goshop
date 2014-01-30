@@ -8,7 +8,7 @@
   <ul class="right">
     <li class="divider"></li>
     {{if .admin_login}}
-    <li><a href="#">{{.admin_login}}</a></li>
+    <li><a href="/admin">{{.admin_login}}</a></li>
     <li><a href="/admin/logout">logout</a></li>
     {{else}}
     <li><a href="/admin/login">login</a></li>
@@ -16,7 +16,6 @@
   </ul>
 
   <ul class="left">
-    <li><a href="/admin">admin home</a></li>
     <li><a href="/admin/products">products</a></li>
     <li><a href="/admin/users">users</a></li>
     <li><a href="/admin/orders">orders</a></li>
