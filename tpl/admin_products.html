@@ -2,16 +2,20 @@
 
 {{if .message_info}}
 <div class="row">
-  <div class="large-12 columns message-info">
-    {{.message_info}}
+  <div class="large-12 columns">
+    <div class="message-info">
+      {{.message_info}}
+    </div>
   </div>
 </div>
 {{end}}
 
 {{if .message_error}}
 <div class="row">
-  <div class="large-12 columns message-error">
-    {{.message_error}}
+  <div class="large-12 columns">
+    <div class="message-error">
+      {{.message_error}}
+    </div>
   </div>
 </div>
 {{end}}
