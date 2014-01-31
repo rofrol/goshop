@@ -6,13 +6,20 @@
         </div>
       </div>
     </div>
-    <!-- foundation -->
+    {{if .production}}
+    <!-- JQuery cdn or local -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script>window.$ || document.write('<script src="/static/foundation/js/vendor/jquery.js"><\/script>')</script>
+    <!-- Foundation cdn or local -->
+    <script src="//cdn.jsdelivr.net/foundation/5.0.3/js/foundation.min.js"></script>
+    <script>window.Foundation || document.write('<script src="/static/foundation/js/foundation.min.js"><\/script>')</script>
+    {{else}}
     <script src="/static/foundation/js/vendor/jquery.js"></script>
     <script src="/static/foundation/js/foundation.min.js"></script>
+    {{end}}
     <script>
       $(document).foundation();
     </script>
-    <!-- /foundation -->
   </body>
 </html>
 {{end}}

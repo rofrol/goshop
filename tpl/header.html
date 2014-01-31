@@ -6,13 +6,17 @@
     <meta charset="utf-8">
     <title dir="ltr">{{.Header}} - shop</title>
 
-    <!-- foundation -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/foundation/css/normalize.css">
     <link rel="stylesheet" href="/static/foundation/css/foundation.css" />
+    {{if .production}}
+    <!-- Modernize cdn or local -->
+    <script src="//cdn.jsdelivr.net/foundation/5.0.3/js/vendor/custom.modernizr.js"></script>
+    <script>window.Modernizr || document.write('<script src="/static/foundation/js/vendor/modernizr.js"><\/script>')</script>
+    {{else}}
     <script src="/static/foundation/js/vendor/modernizr.js"></script>
-    <!-- /foundation -->
+    {{end}}
 
   </head>
   <body>
