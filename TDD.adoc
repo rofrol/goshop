@@ -1,0 +1,67 @@
+= TDD
+
+http://en.wikipedia.org/wiki/Test-driven_development
+
+== Which is the best BDD/TDD testing library for Go?
+
+http://blog.golang.org/cover
+
+https://github.com/smartystreets/goconvey
+
+https://github.com/stretchr/testify
+
+https://github.com/franela/goblin
+
+http://stackoverflow.com/questions/19426703/which-is-the-best-bdd-tdd-testing-library-for-go
+
+== TDD in Go: Time to Testify
+
+At the risk of starting going off topic on this Go forum:  I have nothing but bad experience with tests that use mocks. Some of my colleagues have phrased my concerns eloquently in this Pycon techtalk:
+
+http://www.youtube.com/watch?v=Xu5EhKVZdV8
+
+Mocks are great at removing dependencies in your code. Which then allows you to write low level UNIT tests around the unit of code that you want to test.
+
+If you use mocks in your higher level, integration tests, then I will have to agree that you are just setting yourself up for failure.
+
+Assuming that you understand the difference between unit test and integration test... most people often blur the line between the two.
+
+A nice (but quite long) paper about the topic : http://martinfowler.com/articles/mocksArentStubs.html
+
+https://groups.google.com/forum/#!topic/golang-nuts/RdtAkTQlcrk
+
+== Is that possible to do real TDD by go?
+
+I think Go is suitable for, and have practiced, TDD using Go.
+
+Reading the canonical work on this,
+http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd, it does
+not mention mocks or coverage tools.
+
+In short, I think people should write Go using a TDD philosophy, and
+it supports it just fine.
+
+
+I've never had any problem doing TDD in Go.  I've done unit test, integration test and system test in go without problems.  It's easy to mock out I/O and networking with the mocks in the standard library.  It's also easy to mock out components with Go interfaces and structs.  Dave Cheney (above) also wrote an [article|http://dave.cheney.net/2013/06/09/writing-table-driven-tests-in-go] on table driven testing, which is pretty easy to do in Go.
+
+Aside, what's not production ready about `gocov`? It produces coverage reports just fine and there are other packages that uses it to give you fancier reports.   For instance, `gocov-html` gives you html files that show you your code with coverage and files with % of coverage.
+
+The only problem I've had with `gocov` was while testing concurrent code, `gocov` would trigger a race condition because of its instrumentation.  In the end it was a bug in my code that I didn't catch before that.
+
+In the end, test coverage is just a tool to help you find places you might have forgot to think about, it's not a panacea and high coverage doesn't mean well tested code.  I've written a tool in Java that abuses code coverage tools by just running anything and everything with random garbage.  It ends up giving decent code coverage, while not testing anything.
+
+
+
+I just got the go coverage tool working.
+
+http://songyunhui.blogspot.ca/2013/09/how-to-use-golang-test-coverage-tool.html
+
+I just got the go coverage tool working.
+
+http://songyunhui.blogspot.ca/2013/09/how-to-use-golang-test-coverage-tool.html
+
+== Dependency Injection
+
+The worst kept secret about unit testing in general, and TDD specifically, is that it's primarily a design activity with future correctness as a side effect. Unit tests don't uncover all design problems, but they are effective with respect to cohesion and coupling issues and the rather significant principals that relate to these.
+
+http://openmymind.net/Dependency-Injection-In-Go/
