@@ -32,34 +32,32 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sent := html.EscapeString(r.Form.Get("sent"))
-	if sent == "yes" {
+	fVals := map[string]string{}
+	fVals["sent"] = html.EscapeString(r.Form.Get("sent"))
+	if fVals["sent"] == "yes" {
 
-		title := html.EscapeString(r.Form.Get("title"))
-		tplValues["title"] = title
-		description := html.EscapeString(r.Form.Get("description"))
-		tplValues["description"] = description
-		price := html.EscapeString(r.Form.Get("price"))
-		tplValues["price"] = price
-		quantity := html.EscapeString(r.Form.Get("quantity"))
-		tplValues["quantity"] = quantity
+		fVals["title"] = html.EscapeString(r.Form.Get("title"))
+		fVals["description"] = html.EscapeString(r.Form.Get("description"))
+		fVals["price"] = html.EscapeString(r.Form.Get("price"))
+		fVals["quantity"] = html.EscapeString(r.Form.Get("quantity"))
 
 		message_error := ""
-		if title == "" {
+		if fVals["title"] == "" {
 			message_error += "\n<p>title can't be empty</p>"
 		}
-		if description == "" {
+		if fVals["description"] == "" {
 			message_error += "\n<p>description can't be empty</p>"
 		}
-		if price == "" {
+		if fVals["price"] == "" {
 			message_error += "\n<p>price can't be empty</p>"
 		}
-		if quantity == "" {
+		if fVals["quantity"] == "" {
 			message_error += "\n<p>quantity can't be empty</p>"
 		}
 
 		if message_error != "" {
 			tplValues["message_error"] = template.HTML(message_error)
+			tplValues["fVals"] = fVals
 		} else {
 
 			db, err := sql.Open("sqlite3", "file:./db/app.db?foreign_keys=true")
@@ -86,7 +84,7 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 
 			defer stmt.Close()
 
-			res, err := stmt.Exec(title, description, price, quantity)
+			res, err := stmt.Exec(fVals["title"], fVals["description"], fVals["price"], fVals["quantity"])
 			if err != nil {
 				fmt.Println(err)
 				serveError(w, err)
@@ -104,10 +102,6 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 			session.Values["last_product"] = last
 			session.Save(r, w)
 			tplValues["message_info"] = template.HTML("<p>Adding succeeded</p>")
-			delete(tplValues, "title")
-			delete(tplValues, "description")
-			delete(tplValues, "price")
-			delete(tplValues, "quantity")
 		}
 	}
 
