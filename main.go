@@ -55,7 +55,6 @@ func main() {
 	r.HandleFunc("/products", http.HandlerFunc(products))
 	r.HandleFunc("/admin", http.HandlerFunc(admin_index))
 	r.HandleFunc("/admin/products", http.HandlerFunc(admin_products))
-	r.HandleFunc("/admin/products/add", http.HandlerFunc(admin_products_add))
 	r.HandleFunc("/admin/users", http.HandlerFunc(admin_users))
 	r.HandleFunc("/admin/orders", http.HandlerFunc(admin_orders))
 	r.HandleFunc("/admin/login", http.HandlerFunc(admin_login))

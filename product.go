@@ -19,7 +19,7 @@ func products(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	sql := "select title, text, price, quantity from products order by title"
+	sql := "select title, description, price, quantity from products order by title"
 	rows, err := db.Query(sql)
 	if err != nil {
 		fmt.Printf("%q: %s\n", err, sql)
@@ -29,10 +29,10 @@ func products(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	levels := []map[string]string{}
-	var title, text, price, quantity string
+	var title, description, price, quantity string
 	for rows.Next() {
-		rows.Scan(&title, &text, &price, &quantity)
-		levels = append(levels, map[string]string{"title": title, "text": text, "price": price, "quantity": quantity})
+		rows.Scan(&title, &description, &price, &quantity)
+		levels = append(levels, map[string]string{"title": title, "description": description, "price": price, "quantity": quantity})
 	}
 	tplValues["levels"] = levels
 

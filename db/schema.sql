@@ -4,7 +4,7 @@ drop table if exists products;
 CREATE TABLE products (
   id integer primary key autoincrement,
   title string not null,
-  text string not null,
+  description string not null,
   price float not null,
   quantity integer not null default 0
 );

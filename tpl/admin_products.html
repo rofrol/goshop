@@ -1,30 +1,41 @@
 {{template "header" .}}
-{{if .message}}
+
+{{if .message_info}}
 <div class="row">
-  <div class="large-12 columns error-message">
-    {{.message}}
+  <div class="large-12 columns message-info">
+    {{.message_info}}
   </div>
 </div>
 {{end}}
-<form action="/admin/products/add" method="post">
+
+{{if .message_error}}
+<div class="row">
+  <div class="large-12 columns message-error">
+    {{.message_error}}
+  </div>
+</div>
+{{end}}
+
+<form action="/admin/products" method="post">
+  <input type="hidden" value="yes" name="sent"></input>
   <div class="row">
     <div class="large-12 columns">
-      <input type="text" placeholder="title" name="title"></input>
+      <input type="text" placeholder="title" name="title" value="{{.title}}"></input>
     </div>
   </div>
   <div class="row">
     <div class="large-12 columns">
-      <input type="text" placeholder="text" name="text"></input>
+      <input type="text" placeholder="description" name="description" value="{{.description}}"></input>
     </div>
   </div>
   <div class="row">
     <div class="large-12 columns">
-      <input type="text" placeholder="price" name="price"></input>
+      <input type="text" placeholder="price" name="price" value="{{.price}}"></input>
     </div>
   </div>
   <div class="row">
     <div class="large-12 columns">
-      <input type="text" placeholder="quantity" name="quantity"></input>
+      <input type="text" placeholder="quantity" name="quantity" value="{{.quantity}}"></input>
     </div>
   </div>
   <div class="row">
@@ -39,7 +50,7 @@
       <thead>
         <tr>
           <th>title</th>
-          <th>text</th>
+          <th>description</th>
           <th>price</th>
           <th>quantity</th>
         </tr>
@@ -48,7 +59,7 @@
         {{range $h := .levels}}
         <tr>
           <td>{{$h.title}}</td>
-          <td>{{$h.text}}</td>
+          <td>{{$h.description}}</td>
           <td>{{$h.price}}</td>
           <td>{{$h.quantity}}</td>
         </tr>

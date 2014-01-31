@@ -1,6 +1,11 @@
 #footer {margin-top:10px;}
 th{text-align:left;}
-.error-message {
+.message-info {
+	border: 1px solid green;
+	margin-bottom: 1em;
+	padding: 1em 1em 0 1em;
+}
+.message-error {
 	border: 1px solid red;
 	margin-bottom: 1em;
 	padding: 1em 1em 0 1em;
