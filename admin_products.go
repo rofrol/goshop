@@ -41,22 +41,22 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 		fVals["price"] = html.EscapeString(r.Form.Get("price"))
 		fVals["quantity"] = html.EscapeString(r.Form.Get("quantity"))
 
-		message_error := ""
+		message_error := []string{}
 		if fVals["title"] == "" {
-			message_error += "\n<p>title can't be empty</p>"
+			message_error = append(message_error, "title can't be empty")
 		}
 		if fVals["description"] == "" {
-			message_error += "\n<p>description can't be empty</p>"
+			message_error = append(message_error, "description can't be empty")
 		}
 		if fVals["price"] == "" {
-			message_error += "\n<p>price can't be empty</p>"
+			message_error = append(message_error, "price can't be empty")
 		}
 		if fVals["quantity"] == "" {
-			message_error += "\n<p>quantity can't be empty</p>"
+			message_error = append(message_error, "quantity can't be empty")
 		}
 
-		if message_error != "" {
-			tplValues["message_error"] = template.HTML(message_error)
+		if len(message_error) != 0 {
+			tplValues["message_error"] = message_error
 			tplValues["fVals"] = fVals
 		} else {
 
@@ -101,7 +101,7 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 
 			session.Values["last_product"] = last
 			session.Save(r, w)
-			tplValues["message_info"] = template.HTML("<p>Adding succeeded</p>")
+			tplValues["message_info"] = []string{"Adding succeeded"}
 		}
 	}
 
