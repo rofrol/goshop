@@ -60,7 +60,8 @@ func main() {
 	r.HandleFunc("/admin/login", http.HandlerFunc(admin_login))
 	r.HandleFunc("/admin/logout", http.HandlerFunc(admin_logout))
 	http.Handle("/", r)
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	fs := JustFilesFilesystem{http.Dir("static/")}
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(fs)))
 
 	// starting in goroutines with error reporting, thanks to davecheney from #go-nuts
 	// like this: http://serverfault.com/questions/67316/in-nginx-how-can-i-rewrite-all-http-requests-to-https-while-maintaining-sub-dom

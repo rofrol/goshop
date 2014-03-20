@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"errors"
 	"fmt"
+	"os"
 )
 
 func serveError(w http.ResponseWriter, err error) {
@@ -58,4 +59,25 @@ func notlsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("in notlsHandler")
 	fullUrl := "https://localhost" + r.RequestURI
 	http.Redirect(w, r, fullUrl, http.StatusMovedPermanently)
+}
+
+// http://stackoverflow.com/questions/13302020/rendering-css-in-a-go-web-application
+type JustFilesFilesystem struct {
+	fs http.FileSystem
+}
+
+func (fs JustFilesFilesystem) Open(name string) (http.File, error) {
+	f, err := fs.fs.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	return neuteredReaddirFile{f}, nil
+}
+
+type neuteredReaddirFile struct {
+	http.File
+}
+
+func (f neuteredReaddirFile) Readdir(count int) ([]os.FileInfo, error) {
+	return nil, nil
 }
