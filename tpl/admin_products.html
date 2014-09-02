@@ -16,15 +16,15 @@
 <div class="row">
   <div class="large-12 columns">
     <div class="message-error">
-        {{range .message_error}}
-        <p>{{.}}</p>
-        {{end}}
+      {{range .message_error}}
+      <p>{{.}}</p>
+      {{end}}
     </div>
   </div>
 </div>
 {{end}}
 
-<form action="/admin/products" method="post">
+<form action="/admin/products" method="post" enctype="multipart/form-data">
   <input type="hidden" value="yes" name="sent"></input>
   <div class="row">
     <div class="large-12 columns">
@@ -48,6 +48,11 @@
   </div>
   <div class="row">
     <div class="large-12 columns">
+      <input class="small radius button" type="file" name="filename" id="filename" multiple="multiple">
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
       <input class="small radius button" type="submit" value="add product">
     </div>
   </div>
@@ -61,6 +66,7 @@
           <th>description</th>
           <th>price</th>
           <th>quantity</th>
+          <th>filename</th>
         </tr>
       </thead>
       <tbody>
@@ -70,6 +76,7 @@
           <td>{{$h.description}}</td>
           <td>{{$h.price}}</td>
           <td>{{$h.quantity}}</td>
+          <td><img src="/static/assets/{{$h.filename}}"/></td>
         </tr>
         {{end}}
       </tbody>

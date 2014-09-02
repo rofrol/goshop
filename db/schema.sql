@@ -6,7 +6,8 @@ CREATE TABLE products (
   title string not null,
   description string not null,
   price float not null,
-  quantity integer not null default 0
+  quantity integer not null default 0,
+  filename string not null
 );
 drop table if exists users;
 CREATE TABLE users (

@@ -8,6 +8,9 @@ import (
 	"html"
 	"html/template"
 	"log"
+	"io/ioutil"
+	"io"
+	"os"
 )
 
 func admin_products(w http.ResponseWriter, r *http.Request) {
@@ -27,19 +30,58 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := r.ParseForm(); err != nil {
-		serveError(w, err)
-		return
+	fVals := map[string]string{}
+	if r.Method == "POST" {
+		if false {
+			hah, err := ioutil.ReadAll(r.Body);
+			if err != nil {
+				fmt.Printf("%s", err)
+			}
+			fmt.Printf("%v", string(hah))
+			return
+		}
+
+		reader, err := r.MultipartReader()
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		//copy each part to destination.
+		for {
+			part, err := reader.NextPart()
+			if err == io.EOF {
+				break
+			}
+
+			if part.FileName() == "" { // normal text field
+				b, err := ioutil.ReadAll(part)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				fVals[part.FormName()] = html.EscapeString(string(b))
+			} else {
+				//TODO: generate file name and store it with original name
+				fileName := part.FileName()
+				dst, err := os.Create("static/assets/" + fileName)
+				defer dst.Close()
+
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+
+				if _, err := io.Copy(dst, part); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				fVals[part.FormName()] = fileName
+			}
+		}
 	}
 
-	fVals := map[string]string{}
-	fVals["sent"] = html.EscapeString(r.Form.Get("sent"))
 	if fVals["sent"] == "yes" {
-
-		fVals["title"] = html.EscapeString(r.Form.Get("title"))
-		fVals["description"] = html.EscapeString(r.Form.Get("description"))
-		fVals["price"] = html.EscapeString(r.Form.Get("price"))
-		fVals["quantity"] = html.EscapeString(r.Form.Get("quantity"))
 
 		message_error := []string{}
 		if fVals["title"] == "" {
@@ -53,6 +95,9 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 		}
 		if fVals["quantity"] == "" {
 			message_error = append(message_error, "quantity can't be empty")
+		}
+		if fVals["filename"] == "" {
+			message_error = append(message_error, "filename can't be empty")
 		}
 
 		if len(message_error) != 0 {
@@ -75,7 +120,7 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			stmt, err := tx.Prepare("insert into products(title, description, price, quantity) values(?, ?, ?, ?)")
+			stmt, err := tx.Prepare("insert into products(title, description, price, quantity, filename) values(?, ?, ?, ?, ?)")
 			if err != nil {
 				fmt.Println(err)
 				serveError(w, err)
@@ -84,7 +129,7 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 
 			defer stmt.Close()
 
-			res, err := stmt.Exec(fVals["title"], fVals["description"], fVals["price"], fVals["quantity"])
+			res, err := stmt.Exec(fVals["title"], fVals["description"], fVals["price"], fVals["quantity"], fVals["filename"])
 			if err != nil {
 				fmt.Println(err)
 				serveError(w, err)
@@ -133,7 +178,7 @@ func getProducts() ([]map[string]string, error) {
 	}
 	defer db.Close()
 
-	sql := "select title, description, price, quantity from products order by title"
+	sql := "select title, description, price, quantity, filename from products order by title"
 	rows, err := db.Query(sql)
 	if err != nil {
 		fmt.Printf("%q: %s\n", err, sql)
@@ -142,10 +187,10 @@ func getProducts() ([]map[string]string, error) {
 	defer rows.Close()
 
 	levels := []map[string]string{}
-	var title, description, price, quantity string
+	var title, description, price, quantity, filename string
 	for rows.Next() {
-		rows.Scan(&title, &description, &price, &quantity)
-		levels = append(levels, map[string]string{"title": title, "description": description, "price": price, "quantity": quantity})
+		rows.Scan(&title, &description, &price, &quantity, &filename)
+		levels = append(levels, map[string]string{"title": title, "description": description, "price": price, "quantity": quantity, "filename": filename})
 	}
 	return levels, nil
 }
