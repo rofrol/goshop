@@ -1,3 +1,4 @@
+
 = goshop
 
 Prepare go
@@ -28,6 +29,13 @@ wget http://foundation.zurb.com/cdn/releases/foundation-5.0.3.zip
 unzip foundation-5.0.3.zip -d static/foundation
 rm foundation-5.0.3.zip
 ----
+
+perm
+
+download openssl http://www.openssl.org/related/binaries.html
+generate cert http://stackoverflow.com/questions/10175812/how-to-build-a-self-signed-certificate-with-openssl
+mkdir tls && cd tls
+openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes
 
 Run it
 
