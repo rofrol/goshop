@@ -6,7 +6,6 @@ import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 	"html/template"
-	"log"
 )
 
 func admin_users(w http.ResponseWriter, r *http.Request) {
@@ -53,13 +52,11 @@ func admin_users(w http.ResponseWriter, r *http.Request) {
 
 	pageTemplate, err := template.ParseFiles("tpl/admin_users.html", "tpl/header.html", "tpl/admin_bar.html", "tpl/footer.html")
 	if err != nil {
-		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 
 	pageTemplate.Execute(w, tplValues)
 	if err != nil {
-		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 }

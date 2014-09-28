@@ -7,7 +7,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"html"
 	"html/template"
-	"log"
 	"io/ioutil"
 	"io"
 	"os"
@@ -153,19 +152,16 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 	levels, err := getProducts()
 	tplValues["levels"] = levels
 	if err != nil {
-		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 
 	pageTemplate, err := template.ParseFiles("tpl/admin_products.html", "tpl/header.html", "tpl/admin_bar.html", "tpl/footer.html")
 	if err != nil {
-		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 
 	err = pageTemplate.Execute(w, tplValues)
 	if err != nil {
-		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 }

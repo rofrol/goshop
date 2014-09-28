@@ -5,7 +5,6 @@ import(
 	"html/template"
 	"net/http"
 	"database/sql"
-	"log"
 )
 
 func products(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +39,6 @@ func products(w http.ResponseWriter, r *http.Request) {
 
 	pageTemplate, err := template.ParseFiles("tpl/products.html", "tpl/header.html", "tpl/bar.html", "tpl/footer.html")
 	if err != nil {
-		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 
@@ -50,7 +48,6 @@ func products(w http.ResponseWriter, r *http.Request) {
 
 	err = pageTemplate.Execute(w, tplValues)
 	if err != nil {
-		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 }

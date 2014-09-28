@@ -6,12 +6,13 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"log"
 )
 
 func serveError(w http.ResponseWriter, err error) {
+	log.Println(err)
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	io.WriteString(w, "Internal Server Error "+err.Error())
 }
 
 func redirectHandler(path string) func(http.ResponseWriter, *http.Request) {

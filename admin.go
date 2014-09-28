@@ -6,7 +6,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"html"
 	"html/template"
-	"log"
 )
 
 func admin_login(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +34,6 @@ func admin_login(w http.ResponseWriter, r *http.Request) {
 	} else {
 		pageTemplate, err := template.ParseFiles("tpl/admin_login.html", "tpl/header.html", "tpl/admin_bar_notlogged.html", "tpl/footer.html")
 		if err != nil {
-			log.Fatalf("execution failed: %s", err)
 			serveError(w, err)
 		}
 
@@ -46,7 +44,6 @@ func admin_login(w http.ResponseWriter, r *http.Request) {
 
 		pageTemplate.Execute(w, tplValues)
 		if err != nil {
-			log.Fatalf("execution failed: %s", err)
 			serveError(w, err)
 		}
 	}
@@ -77,13 +74,11 @@ func admin_index(w http.ResponseWriter, r *http.Request) {
 
 	pageTemplate, err := template.ParseFiles("tpl/admin_index.html", "tpl/header.html", "tpl/admin_bar.html", "tpl/footer.html")
 	if err != nil {
-		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 
 	pageTemplate.Execute(w, tplValues)
 	if err != nil {
-		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 }

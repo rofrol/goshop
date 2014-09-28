@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/sessions"
 	"html"
 	"html/template"
-	"log"
 )
 
 func loginAvailable(login string) bool {
@@ -119,7 +118,6 @@ func register(w http.ResponseWriter, r *http.Request) {
 	} else {
 		pageTemplate, err := template.ParseFiles("tpl/register.html", "tpl/header.html", "tpl/bar.html", "tpl/footer.html")
 		if err != nil {
-			log.Fatalf("execution failed: %s", err)
 			serveError(w, err)
 		}
 
@@ -130,7 +128,6 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 		pageTemplate.Execute(w, tplValues)
 		if err != nil {
-			log.Fatalf("execution failed: %s", err)
 			serveError(w, err)
 		}
 	}
@@ -141,7 +138,6 @@ func registered(w http.ResponseWriter, r *http.Request) {
 
 	pageTemplate, err := template.ParseFiles("tpl/registered.html", "tpl/header.html", "tpl/bar.html", "tpl/footer.html")
 	if err != nil {
-		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 	//req2 := session.Values["req"]
@@ -159,7 +155,6 @@ func registered(w http.ResponseWriter, r *http.Request) {
 
 	pageTemplate.Execute(w, tplValues)
 	if err != nil {
-		log.Fatalf("execution failed: %s", err)
 		serveError(w, err)
 	}
 }
@@ -185,7 +180,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	} else {
 		pageTemplate, err := template.ParseFiles("tpl/login.html", "tpl/header.html", "tpl/bar.html", "tpl/footer.html")
 		if err != nil {
-			log.Fatalf("execution failed: %s", err)
 			serveError(w, err)
 		}
 
@@ -196,7 +190,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 		pageTemplate.Execute(w, tplValues)
 		if err != nil {
-			log.Fatalf("execution failed: %s", err)
 			serveError(w, err)
 		}
 	}
