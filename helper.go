@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"log"
+	"math/rand"
 )
 
 func serveError(w http.ResponseWriter, err error) {
@@ -81,4 +82,28 @@ type neuteredReaddirFile struct {
 
 func (f neuteredReaddirFile) Readdir(count int) ([]os.FileInfo, error) {
 	return nil, nil
+}
+
+// or with crypto "func String" https://github.com/jmcvetta/randutil/blob/master/randutil.go
+func randSeq(n int) string {
+	letters := []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    b := make([]rune, n)
+    for i := range b {
+        b[i] = letters[rand.Intn(len(letters))]
+    }
+    return string(b)
+}
+
+func Extension(b []byte) string {
+	mime := http.DetectContentType(b)
+	exts := map[string]string{
+		"image/jpeg": "jpg",
+		"image/png": "png",
+		"image/gif": "gif",
+	}
+	ext, ok := exts[mime]
+	if !ok {
+		ext = ""
+	}
+	return "." + ext
 }

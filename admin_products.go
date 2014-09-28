@@ -10,6 +10,8 @@ import (
 	"io/ioutil"
 	"io"
 	"os"
+	"log"
+	"bytes"
 )
 
 func admin_products(w http.ResponseWriter, r *http.Request) {
@@ -61,17 +63,38 @@ func admin_products(w http.ResponseWriter, r *http.Request) {
 				}
 				fVals[part.FormName()] = html.EscapeString(string(b))
 			} else {
-				//TODO: generate file name and store it with original name
-				fileName := part.FileName()
-				dst, err := os.Create("static/assets/" + fileName)
-				defer dst.Close()
+				assetsDir := "static/assets/"
+				maxFileName := 20
+				if err := os.MkdirAll(assetsDir, 0777); err != nil {
+					log.Println(err)
+					return
+				}
 
+				b, err := ioutil.ReadAll(part)
+				if err != nil {
+					log.Fatal(err)
+				}
+				ext := Extension(b)
+
+				var path string
+				var fileName string
+				for {
+					fileName = randSeq(maxFileName) + ext
+					path = assetsDir + fileName
+					if _, err := os.Stat(path); os.IsNotExist(err) {
+						//got unique path, so break
+						break
+					}
+				}
+
+				dst, err := os.Create(path)
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
+				defer dst.Close()
 
-				if _, err := io.Copy(dst, part); err != nil {
+				if _, err := io.Copy(dst, bytes.NewReader(b)); err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
