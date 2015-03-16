@@ -4,21 +4,18 @@
 Prepare go
 
 ----
-GOPATH=~/projects/go/src/github.com/rofrol
-mkdir -p $GOPATH/src
-echo "export GOPATH=$GOPATH" >> ~/.bash_profile
-echo "export PATH=\$PATH:$GOPATH/bin" >> ~/.bash_profile
-source ~/.bash_profile
+GOPATH=~/projects/go
+mkdir -p $GOPATH
+echo "export GOPATH=$GOPATH" >> ~/.bashrc
+echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
+source ~/.bashrc
 ----
 
 goshop download
 
 ----
-GOSHOP="$GOPATH/src/github.com/rofrol"
-mkdir -p $ROFROL
-cd $ROFROL
-git clone https://github.com/rofrol/goshop
-cd goshop
+go get github.com/rofrol/goshop
+cd $GOPATH/src/github.com/rofrol/goshop
 ----
 
 
@@ -33,16 +30,19 @@ rm foundation-5.0.3.zip
 perm
 
 download openssl http://www.openssl.org/related/binaries.html
+
 generate cert http://stackoverflow.com/questions/10175812/how-to-build-a-self-signed-certificate-with-openssl
+
+----
 mkdir tls && cd tls
 openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes
+----
 
 Run it
 
 ----
 sh db/init.sh
 go get .
-go install
 goshop
 ----
 
