@@ -46,6 +46,8 @@ go get .
 goshop
 ----
 
+Go to https://localhost:9000 and https://localhost:9000/admin (login and password from `db/schema.sql`)
+
 == Go - Managing versions
 
 Q: How about automatic version managment in go?
