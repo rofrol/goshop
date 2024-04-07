@@ -5,4 +5,5 @@
 !*.adoc
 !tpl
 !db
+!*.md
 db/populate.sql
